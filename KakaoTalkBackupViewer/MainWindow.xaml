@@ -1,0 +1,110 @@
+﻿<Window x:Class="KakaoTalkBackupViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KakaoTalkBackupViewer"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="5" />
+            <!-- GridSplitter를 위한 작은 열 추가 -->
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Margin="10,20,0,0" Grid.Row="0" Grid.Column="0">메시지</TextBlock>
+
+        <!-- 메시지 목록 -->
+        <ListView x:Name="MessageListView" 
+          SelectionChanged="MessageListView_SelectionChanged"
+          Margin="10"
+          Grid.Row="1" Grid.Column="0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="시간" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Time}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="대화명" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding UserId}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="메시지/이미지">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <!-- 이미지 출력 -->
+                                    <Image Source="{Binding ImagePath}" 
+                                   Width="Auto" 
+                                   MaxWidth="200" 
+                                   MaxHeight="200" 
+                                   Stretch="Uniform" 
+                                   Margin="5"
+                                   Visibility="{Binding IsImage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    <!-- 텍스트 출력 -->
+                                    <TextBlock Text="{Binding Content}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- 열 간격 조절기 (GridSplitter) -->
+        <GridSplitter Grid.Column="1"
+                      Grid.RowSpan="2"
+                      Width="5"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Background="Gray"
+                      ResizeBehavior="PreviousAndNext" />
+
+        <TextBlock Margin="10,20,0,0" Grid.Row="0" Grid.Column="2">이미지</TextBlock>
+        <!-- 이미지 출력 영역 -->
+        <Grid Grid.Column="2" Margin="10" Grid.Row="1">
+            <!-- 이미지 컨트롤 -->
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <Image x:Name="ImageBox" 
+                           RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <ScaleTransform x:Name="ImageScaleTransform" />
+                        </Image.RenderTransform>
+                    </Image>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- 확대/축소 버튼 -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="5">
+                <Button Content="확대" Click="ZoomInButton_Click" Margin="5" />
+                <Button Content="축소" Click="ZoomOutButton_Click" Margin="5" />
+                <Button Content="원래 크기" Click="ResetZoomButton_Click" Margin="5" />
+            </StackPanel>
+        </Grid>
+
+        <!-- 메뉴 -->
+        <Menu VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Grid.Row="0">
+            <MenuItem Header="파일">
+                <MenuItem Header="열기" Click="OpenFileMenuItem_Click"/>
+            </MenuItem>
+        </Menu>
+    </Grid>
+</Window>
